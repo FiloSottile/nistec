@@ -20,6 +20,9 @@ handled and encoded according to SEC 1, Version 2.0, and invalid curve points
 can't be represented. This makes it particularly suitable to be used as a
 prime order group implementation.
 
+Use the `purego` build tag to exclude the assembly and rely entirely on formally
+verified fiat-crypto arithmetic and complete addition formulas.
+
 Read the docs at [pkg.go.dev/filippo.io/nistec](https://pkg.go.dev/filippo.io/nistec).
 
 This repository does not accept contributions.
