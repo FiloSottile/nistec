@@ -1,0 +1,15 @@
+name: Go tests
+on: [push, pull_request]
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-go@v3
+        with: { go-version: 1.x }
+      - uses: actions/checkout@v3
+      - run: go test -race ./...
+      - run: GOARCH=arm64 go test -c
+      - run: GOARCH=ppc64le go test -c
+      - run: GOARCH=s390x go test -c
+      - run: GOARCH=arm go test -c
