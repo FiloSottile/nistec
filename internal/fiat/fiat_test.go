@@ -5,8 +5,9 @@
 package fiat_test
 
 import (
-	"crypto/internal/nistec/fiat"
 	"testing"
+
+	"filippo.io/nistec/internal/fiat"
 )
 
 func BenchmarkMul(b *testing.B) {

@@ -7,9 +7,9 @@
 package nistec
 
 import (
-	"crypto/internal/nistec/fiat"
 	"crypto/subtle"
 	"errors"
+	"filippo.io/nistec/internal/fiat"
 	"sync"
 )
 
