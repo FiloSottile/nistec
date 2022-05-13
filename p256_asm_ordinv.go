@@ -18,7 +18,7 @@ func p256OrdMul(res, in1, in2 *p256OrdElement)
 //go:noescape
 func p256OrdSqr(res, in *p256OrdElement, n int)
 
-func P256OrdInverse(k []byte) ([]byte, error) {
+func p256OrdInverse(k []byte) ([]byte, error) {
 	if len(k) != 32 {
 		return nil, errors.New("invalid scalar length")
 	}
