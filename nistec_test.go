@@ -9,17 +9,12 @@ import (
 	"crypto/elliptic"
 	"math/big"
 	"math/rand"
-	"os"
-	"strings"
 	"testing"
 
 	"filippo.io/nistec"
 )
 
 func TestAllocations(t *testing.T) {
-	if strings.HasSuffix(os.Getenv("GO_BUILDER_NAME"), "-noopt") {
-		t.Skip("skipping allocations test without relevant optimizations")
-	}
 	t.Run("P224", func(t *testing.T) {
 		if allocs := testing.AllocsPerRun(100, func() {
 			p := nistec.NewP224Point().SetGenerator()
