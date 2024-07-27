@@ -10,9 +10,9 @@ import "filippo.io/nistec/internal/fiat"
 
 // Negate sets p = -q and returns p.
 func (p *P256Point) Negate(q *P256Point) *P256Point {
-	p.x.Set(q.x)
-	p.y.Sub(new(fiat.P256Element), q.y)
-	p.z.Set(q.z)
+	p.x.Set(&q.x)
+	p.y.Sub(new(fiat.P256Element), &q.y)
+	p.z.Set(&q.z)
 	return p
 }
 
@@ -27,9 +27,9 @@ func (p *P256Point) Equal(q *P256Point) int {
 	qinf := q.z.IsZero()
 	bothinf := pinf & qinf
 	noneinf := (1 - pinf) & (1 - qinf)
-	px := new(fiat.P256Element).Mul(p.x, q.z)
-	qx := new(fiat.P256Element).Mul(q.x, p.z)
-	py := new(fiat.P256Element).Mul(p.y, q.z)
-	qy := new(fiat.P256Element).Mul(q.y, p.z)
+	px := new(fiat.P256Element).Mul(&p.x, &q.z)
+	qx := new(fiat.P256Element).Mul(&q.x, &p.z)
+	py := new(fiat.P256Element).Mul(&p.y, &q.z)
+	qy := new(fiat.P256Element).Mul(&q.y, &p.z)
 	return bothinf | (noneinf & px.Equal(qx) & py.Equal(qy))
 }
