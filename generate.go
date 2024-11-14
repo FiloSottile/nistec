@@ -154,8 +154,9 @@ package nistec
 import (
 	"crypto/subtle"
 	"errors"
-	"filippo.io/nistec/internal/fiat"
 	"sync"
+
+	"filippo.io/nistec/internal/fiat"
 )
 
 // {{.p}}ElementLength is the length of an element of the base or scalar field,

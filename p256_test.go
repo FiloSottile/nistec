@@ -8,9 +8,10 @@ package nistec
 
 import (
 	"bytes"
-	"crypto/internal/nistec/fiat"
 	"fmt"
 	"testing"
+
+	"filippo.io/nistec/internal/fiat"
 )
 
 func TestP256PrecomputedTable(t *testing.T) {

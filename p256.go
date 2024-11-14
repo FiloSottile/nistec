@@ -9,13 +9,13 @@ package nistec
 import (
 	"crypto/subtle"
 	"errors"
-	"internal/byteorder"
-	"internal/goarch"
 	"math/bits"
 	"sync"
 	"unsafe"
 
+	"filippo.io/nistec/internal/byteorder"
 	"filippo.io/nistec/internal/fiat"
+	"golang.org/x/sys/cpu"
 )
 
 // P256Point is a P-256 point. The zero value is NOT valid.
@@ -403,10 +403,10 @@ func (s *p256OrdElement) SetBytes(x []byte) (*p256OrdElement, error) {
 		return nil, errors.New("invalid scalar length")
 	}
 
-	s[0] = byteorder.BeUint64(x[24:])
-	s[1] = byteorder.BeUint64(x[16:])
-	s[2] = byteorder.BeUint64(x[8:])
-	s[3] = byteorder.BeUint64(x[:])
+	s[0] = byteorder.BEUint64(x[24:])
+	s[1] = byteorder.BEUint64(x[16:])
+	s[2] = byteorder.BEUint64(x[8:])
+	s[3] = byteorder.BEUint64(x[:])
 
 	// Ensure s is in the range [0, ord(G)-1]. Since 2 * ord(G) > 2²⁵⁶, we can
 	// just conditionally subtract ord(G), keeping the result if it doesn't
@@ -426,10 +426,10 @@ func (s *p256OrdElement) SetBytes(x []byte) (*p256OrdElement, error) {
 
 func (s *p256OrdElement) Bytes() []byte {
 	var out [32]byte
-	byteorder.BePutUint64(out[24:], s[0])
-	byteorder.BePutUint64(out[16:], s[1])
-	byteorder.BePutUint64(out[8:], s[2])
-	byteorder.BePutUint64(out[:], s[3])
+	byteorder.BEPutUint64(out[24:], s[0])
+	byteorder.BEPutUint64(out[16:], s[1])
+	byteorder.BEPutUint64(out[8:], s[2])
+	byteorder.BEPutUint64(out[:], s[3])
 	return out[:]
 }
 
@@ -527,7 +527,7 @@ func (p *P256Point) ScalarMult(q *P256Point, scalar []byte) (*P256Point, error) 
 		}
 
 		table.Select(t, sel)
-		t.Negate(sign)
+		p256Negate(t, sign)
 		p.Add(p, t)
 	}
 
@@ -535,7 +535,7 @@ func (p *P256Point) ScalarMult(q *P256Point, scalar []byte) (*P256Point, error) 
 }
 
 // Negate sets p to -p, if cond == 1, and to p if cond == 0.
-func (p *P256Point) Negate(cond int) *P256Point {
+func p256Negate(p *P256Point, cond int) *P256Point {
 	negY := new(fiat.P256Element)
 	negY.Sub(negY, &p.y)
 	p.y.Select(negY, &p.y, cond)
@@ -571,10 +571,10 @@ var p256GeneratorTables *[43]p256AffineTable
 
 func init() {
 	p256GeneratorTablesPtr := unsafe.Pointer(&p256PrecomputedEmbed)
-	if goarch.BigEndian {
+	if cpu.IsBigEndian {
 		var newTable [43 * 32 * 2 * 4]uint64
 		for i, x := range (*[43 * 32 * 2 * 4][8]byte)(p256GeneratorTablesPtr) {
-			newTable[i] = byteorder.LeUint64(x[:])
+			newTable[i] = byteorder.LEUint64(x[:])
 		}
 		p256GeneratorTablesPtr = unsafe.Pointer(&newTable)
 	}
