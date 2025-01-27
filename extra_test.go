@@ -165,3 +165,10 @@ func testInfinity[P nistPointExtra[P]](t *testing.T, newPoint func() P, c ellipt
 		}
 	}
 }
+
+func fatalIfErr(t *testing.T, err error) {
+	t.Helper()
+	if err != nil {
+		t.Fatal(err)
+	}
+}
