@@ -7,8 +7,9 @@
 package fiat
 
 import (
-	"crypto/subtle"
 	"errors"
+
+	"filippo.io/nistec/internal/subtle"
 )
 
 // P224Element is an integer modulo 2^224 - 2^96 + 1.
@@ -78,13 +79,8 @@ func (e *P224Element) SetBytes(v []byte) (*P224Element, error) {
 	// the encoding of -1 mod p, so p - 1, the highest canonical encoding.
 	var minusOneEncoding = new(P224Element).Sub(
 		new(P224Element), new(P224Element).One()).Bytes()
-	for i := range v {
-		if v[i] < minusOneEncoding[i] {
-			break
-		}
-		if v[i] > minusOneEncoding[i] {
-			return nil, errors.New("invalid P224Element encoding")
-		}
+	if subtle.ConstantTimeLessOrEqBytes(v, minusOneEncoding) == 0 {
+		return nil, errors.New("invalid P224Element encoding")
 	}
 
 	var in [p224ElementLen]byte
