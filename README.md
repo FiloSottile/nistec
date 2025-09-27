@@ -8,7 +8,7 @@ This package implements the NIST P elliptic curves, according to FIPS 186-4
 and SEC 1, Version 2.0, exposing the necessary APIs to build a wide array of
 higher-level primitives.
 
-It's an exported version of `crypto/internal/nistec` in the standard library,
+It's an exported version of `crypto/internal/fips140/nistec` in the standard library,
 which powers `crypto/elliptic`, `crypto/ecdsa`, and `crypto/ecdh`.
 The git history has been preserved, and new upstream changes are applied periodically.
 
@@ -25,5 +25,5 @@ verified fiat-crypto arithmetic and complete addition formulas.
 
 Read the docs at [pkg.go.dev/filippo.io/nistec](https://pkg.go.dev/filippo.io/nistec).
 
-This repository does not accept contributions.
+This repository generally does not accept contributions.
 Any changes should be submitted upstream to the Go project.
