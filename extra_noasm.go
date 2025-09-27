@@ -15,3 +15,21 @@ func (p *P256Point) Negate(q *P256Point) *P256Point {
 	p.z.Set(q.z)
 	return p
 }
+
+// IsInfinity returns 1 if p is the point-at-infinity, 0 otherwise.
+func (p *P256Point) IsInfinity() int {
+	return p.z.IsZero()
+}
+
+// Equal returns 1 if p and q represent the same point, 0 otherwise.
+func (p *P256Point) Equal(q *P256Point) int {
+	pinf := p.z.IsZero()
+	qinf := q.z.IsZero()
+	bothinf := pinf & qinf
+	noneinf := (1 - pinf) & (1 - qinf)
+	px := new(fiat.P256Element).Mul(p.x, q.z)
+	qx := new(fiat.P256Element).Mul(q.x, p.z)
+	py := new(fiat.P256Element).Mul(p.y, q.z)
+	qy := new(fiat.P256Element).Mul(q.y, p.z)
+	return bothinf | (noneinf & px.Equal(qx) & py.Equal(qy))
+}
