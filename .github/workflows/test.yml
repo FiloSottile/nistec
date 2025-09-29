@@ -1,16 +1,59 @@
 name: Go tests
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  schedule: # daily at 09:42 UTC
+    - cron: '42 9 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
 jobs:
   test:
-    name: Test
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        go:
+          - { go-version: stable }
+          - { go-version: oldstable }
+          - { go-version-file: go.mod }
+        deps:
+          - locked
+          - latest
     steps:
-      - uses: actions/setup-go@v3
-        with: { go-version: 1.x }
-      - uses: actions/checkout@v3
-      - run: go test -race ./...
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@v6
+        with:
+          go-version: ${{ matrix.go.go-version }}
+          go-version-file: ${{ matrix.go.go-version-file }}
+      - run: go get -u
+        if: matrix.deps == 'latest'
+      - run: go test ./...
       - run: go test -tags purego ./...
+      - run: go test -race -short ./...
       - run: GOARCH=arm64 go test -c
       - run: GOARCH=ppc64le go test -c
       - run: GOARCH=s390x go test -c
       - run: GOARCH=arm go test -c
+  staticcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@v6
+        with:
+          go-version: stable
+      - run: go run honnef.co/go/tools/cmd/staticcheck@latest ./...
+  govulncheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@v6
+        with:
+          go-version: stable
+      - run: go run golang.org/x/vuln/cmd/govulncheck@latest ./...

@@ -7,15 +7,18 @@ package nistec_test
 import (
 	"bytes"
 	"crypto/elliptic"
+	"crypto/rand"
 	"fmt"
 	"math/big"
-	"math/rand"
 	"testing"
 
 	"filippo.io/nistec"
 )
 
 func TestNISTECAllocations(t *testing.T) {
+	if raceEnabled {
+		t.Skip("skipping allocation test in -race mode")
+	}
 	t.Run("P224", func(t *testing.T) {
 		if allocs := testing.AllocsPerRun(10, func() {
 			p := nistec.NewP224Point().SetGenerator()
