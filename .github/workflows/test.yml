@@ -31,6 +31,7 @@ jobs:
       - uses: geomys/sandboxed-step@v1.1.1
         with:
           run: |
+            sudo apt-get update && sudo apt-get install -y build-essential
             if [ "${{ matrix.deps }}" = "latest" ]; then
               go get -u && go mod tidy
             fi
