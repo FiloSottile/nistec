@@ -28,10 +28,9 @@ jobs:
         with:
           go-version: ${{ matrix.go.go-version }}
           go-version-file: ${{ matrix.go.go-version-file }}
-      - uses: geomys/sandboxed-step@v1.1.1
+      - uses: geomys/sandboxed-step@v1.2.0
         with:
           run: |
-            sudo apt-get update && sudo apt-get install -y build-essential
             if [ "${{ matrix.deps }}" = "latest" ]; then
               go get -u && go mod tidy
             fi
